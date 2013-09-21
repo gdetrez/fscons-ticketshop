@@ -190,6 +190,9 @@ DJANGO_APPS = (
     # Admin panel and documentation:
     'django.contrib.admin',
     # 'django.contrib.admindocs',
+
+    'tickets',
+    'coupons',
 )
 
 THIRD_PARTY_APPS = (
