@@ -1,121 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>FSCONS 2013 tickets | FSCONS</title>
-  <link rel="stylesheet" href="https://fscons.org/2013/fscons.theme.css" type="text/css" media="screen">
-</head>
-<body>
-  <div class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/2013/">
-        <img class="logo" alt="FSCONS logo" src="/2013/images/logo-small.png">
-        FSCONS
-      </a>
+{% extends "layout.html" %}
+
+{% block "content" %}
+<form role="form" action="" method="POST">
+  {% csrf_token %}
+  <fieldset><legend>Contact details</legend>
+    {% include "bootstrap-form-group.html" with field=form.name %}
+    {% include "bootstrap-form-group.html" with field=form.email %}
+    <div class="checkbox">
+      <label>
+        {{ form.keep_me_updated }}
+        Keep me updated about the next FSCONS.
+      </label>
     </div>
+  </fieldset>
 
-    <div class="collapse navbar-collapse nav-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/2013/">FSCONS 2013</a></li>
-        <li><a href="/2013/cfp/">CFP</a></li>
-        <!--li><a href="#about">About</a></li-->
-        <!--li><a href="#contact">Contact</a></li-->
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div>
-</div>
-
-<div id="wrap">
-  <div class="wrapper container" id="main">
-    {% for message in messages %}
-    <div class="alert {% if 'error' in message.tags %}alert-danger{% endif %}">{{ message }}</div>
-    {% endfor %}
-    <h1>FSCONS 2013 tickets</h1>
-    <form role="form" action="" method="POST">
-      {% csrf_token %}
-      <fieldset><legend>Contact details</legend>
-        {% include "bootstrap-form-group.html" with field=form.name %}
-        {% include "bootstrap-form-group.html" with field=form.email %}
-        <div class="checkbox">
-          <label>
-            {{ form.keep_me_updated }}
-            Keep me updated about the next FSCONS.
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset><legend>Tickets</legend>
-        {{ formset.management_form }}
-        {% for f in formset %}
-        {{ f.id }}
-        <div class="row" style="margin-bottom:1em" >
-          <div class="input-group col-lg-5 {% if f.name.errors%}has-error{% endif %}">
-            <span class="input-group-addon">name: </span>
-            {{ f.name }}
-          </div>
-          <div class="col-lg-5 {% if f.ticket_type.errors%}has-error{% endif %}">
-            {{ f.ticket_type }}
-          </div>
-          {% if forloop.last %}
-          <div class="col-lg-2">
-            <div class="btn-group">
-              <button type="submit" name="minus" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></button>
-              <button type="submit" name="plus" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
-            </div>
-          </div>
-          {% endif %}
-        </div>
-        {% endfor %}
-      </fieldset>
-
-      <fieldset><legend>Payment details</legend>
-          <div class="form-group">
-              <label for="inputEmail1" class="col-lg-2 control-label">
-                  {{ form.additional_contribution.label }}
-              </label>
-              <div class="col-lg-10">
-                  {{ form.additional_contribution }}
-                  <span class="help-block">
-                      {{ form.additional_contribution.help_text }}
-                  </span>
-                  {% for error in form.additional_contribution.errors %}
-                  <span class="help-block">{{ error|escape }}</span>
-                  {% endfor %}
-              </div>
-          </div>
-          <div class="form-group">
-              <label for="id_coupon" class="col-lg-2 control-label">
-                  {{ form.coupon.label }}
-              </label>
-              <div class="col-lg-10">
-                  {{ form.coupon }}
-                  <span class="help-block">
-                      {{ form.coupon.help_text }}
-                  </span>
-                  {% for error in form.coupon.errors %}
-                  <span class="help-block">{{ error|escape }}</span>
-                  {% endfor %}
-              </div>
-          </div>
-      </fieldset>
-
-      <fieldset><legend>Additional information</legend>
-        {% include "bootstrap-form-group.html" with field=form.additional_information %}
-      </fieldset>
-      <div class="control-group row">
-        <button type="submit" class="btn btn-primany col-lg-6 col-md-offset-3" id="checkout">
-            Checkout
-        </button>
+  <fieldset><legend>Tickets</legend>
+    {{ formset.management_form }}
+    {% for f in formset %}
+    {{ f.id }}
+    <div class="row" style="margin-bottom:1em" >
+      <div class="input-group col-lg-5 {% if f.name.errors%}has-error{% endif %}">
+        <span class="input-group-addon">name: </span>
+        {{ f.name }}
       </div>
-    </form>
-  </div>
-</div>
+      <div class="col-lg-5 {% if f.ticket_type.errors%}has-error{% endif %}">
+        {{ f.ticket_type }}
+      </div>
+      {% if forloop.last %}
+      <div class="col-lg-2">
+        <div class="btn-group">
+          <button type="submit" name="minus" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></button>
+          <button type="submit" name="plus" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </fieldset>
 
+  <fieldset><legend>Payment details</legend>
+      <div class="form-group">
+          <label for="inputEmail1" class="col-lg-2 control-label">
+              {{ form.additional_contribution.label }}
+          </label>
+          <div class="col-lg-10">
+              {{ form.additional_contribution }}
+              <span class="help-block">
+                  {{ form.additional_contribution.help_text }}
+              </span>
+              {% for error in form.additional_contribution.errors %}
+              <span class="help-block">{{ error|escape }}</span>
+              {% endfor %}
+          </div>
+      </div>
+      <div class="form-group">
+          <label for="id_coupon" class="col-lg-2 control-label">
+              {{ form.coupon.label }}
+          </label>
+          <div class="col-lg-10">
+              {{ form.coupon }}
+              <span class="help-block">
+                  {{ form.coupon.help_text }}
+              </span>
+              {% for error in form.coupon.errors %}
+              <span class="help-block">{{ error|escape }}</span>
+              {% endfor %}
+          </div>
+      </div>
+  </fieldset>
+
+  <fieldset><legend>Additional information</legend>
+    {% include "bootstrap-form-group.html" with field=form.additional_information %}
+  </fieldset>
+  <div class="control-group row">
+    <button type="submit" class="btn btn-primany col-lg-6 col-md-offset-3" id="checkout">
+        Checkout
+    </button>
+  </div>
+</form>
+{% endblock %}
