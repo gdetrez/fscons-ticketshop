@@ -1,5 +1,5 @@
 test:
-	coverage run manage.py test --settings=ticketshop.settings.test
+	coverage run ticketshop/manage.py test --settings=ticketshop.settings.test
 
 resetdb:
 	rm -rf ticketshop/default.db
