@@ -1,13 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from tickets.views import purchase_tickets
+from tickets.views import purchase_tickets, confirmation
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', purchase_tickets),
+    url(r'^confirm/$', confirmation),
 
     # Examples:
     # url(r'^$', 'ticketshop.views.home', name='home'),
