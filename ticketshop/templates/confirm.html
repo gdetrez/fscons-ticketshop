@@ -24,10 +24,15 @@
 
     </tr>
     {% endfor %}
-    <tr>
-        <td></td>
-        <td></td>
-        <td class="text-right"><b>Total:</b> {{ purchase.price }} SEK</td>
+    <tr><td></td><td></td>
+        <td class="text-right">
+            <b>Additional contribution:</b> {{ purchase.additional_contribution }} SEK<br />
+            {% if purchase.coupon %}
+                <b>Coupon code:</b> -{{ purchase.coupon.percentage }}%<br />
+            {% endif %}
+            <b>Total:</b> {{ purchase.price }} SEK
+        </td>
+    </tr>
 </table>
 
 <div class="row">

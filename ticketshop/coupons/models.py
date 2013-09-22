@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Coupon(models.Model):
-    code = models.CharField( max_length = 10 )
+    code = models.CharField( max_length = 10, primary_key=True )
     percentage = models.IntegerField()
     active = models.BooleanField( default = True )
 

@@ -57,6 +57,7 @@ class TicketPurchase(models.Model):
         p = 0
         for ticket in self.ticket_set.all():
             p += ticket.ticket_type.price
+        p+= self.additional_contribution
         if self.coupon is not None:
             p = self.coupon.apply(p)
         return p

@@ -41,20 +41,16 @@
     <h1>FSCONS 2013 tickets</h1>
     <form role="form" action="" method="POST">
       {% csrf_token %}
-      <div class="form-group {% if form.name.errors%}has-error{% endif %}">
-        <label class="control-label" for="id_name">{{ form.name.label }}</label>
-        {{ form.name }}
-        {% for error in form.name.errors %}
-        <span class="help-block">{{ error|escape }}</span>
-        {% endfor %}
-      </div>
-      <div class="form-group {% if form.email.errors%}has-error{% endif %}">
-        <label class="control-label" for="id_email">{{ form.email.label }}</label>
-        {{ form.email }}
-        {% for error in form.email.errors %}
-        <span class="help-block">{{ error|escape }}</span>
-        {% endfor %}
-      </div>
+      <fieldset><legend>Contact details</legend>
+        {% include "bootstrap-form-group.html" with field=form.name %}
+        {% include "bootstrap-form-group.html" with field=form.email %}
+        <div class="checkbox">
+          <label>
+            {{ form.keep_me_updated }}
+            Keep me updated about the next FSCONS.
+          </label>
+        </div>
+      </fieldset>
 
       <fieldset><legend>Tickets</legend>
         {{ formset.management_form }}
@@ -95,8 +91,25 @@
                   {% endfor %}
               </div>
           </div>
+          <div class="form-group">
+              <label for="id_coupon" class="col-lg-2 control-label">
+                  {{ form.coupon.label }}
+              </label>
+              <div class="col-lg-10">
+                  {{ form.coupon }}
+                  <span class="help-block">
+                      {{ form.coupon.help_text }}
+                  </span>
+                  {% for error in form.coupon.errors %}
+                  <span class="help-block">{{ error|escape }}</span>
+                  {% endfor %}
+              </div>
+          </div>
       </fieldset>
 
+      <fieldset><legend>Additional information</legend>
+        {% include "bootstrap-form-group.html" with field=form.additional_information %}
+      </fieldset>
       <div class="control-group row">
         <button type="submit" class="btn btn-primany col-lg-6 col-md-offset-3" id="checkout">
             Checkout
