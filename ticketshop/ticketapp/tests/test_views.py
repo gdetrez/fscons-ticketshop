@@ -28,7 +28,13 @@ class TestConfirmationView(TestCase):
         self.client.login(username='user', password='password')
 
         # Create data
-        TicketType.objects.create( name = "Standard ticket", price = 100 )
+        tt = TicketType.objects.create( name = "Standard ticket", price = 100 )
+        self.purchase = TicketPurchase.objects.create(
+            name = "Bruce Wayne",
+            email = "bruce@wayneenterprise.com" )
+        self.purchase.ticket_set.create( name = "Batman", ticket_type = tt )
+        self.purchase.ticket_set.create( name = "Catwoman", ticket_type = tt )
+        self.invoice_id = self.purchase.invoice_id
 
     def test_itRedirectToTheHomePageWhenThereIsNoSessionData(self):
         """
@@ -37,25 +43,12 @@ class TestConfirmationView(TestCase):
         """
         self.assertRedirects(self.client.get('/confirm/'), '/')
 
-    def test_itAddsAnErrorMessageWhenThereIsNoSessionData(self):
-        """
-        Test that /confirm/ adds an error message when the session doesn't
-        contain any purchase data
-        """
-        response = self.client.get('/confirm/', follow=True)
-        assert "Your session has expired." in [m.message for m in response.context.get('messages')]
-
     def test_itDisplaysTheContactName(self):
         """
         Test that the view displays the contact name
         """
         session = self.client.session
-        session['ticket-purchase'] = \
-            TicketPurchase( name = "Bruce Wayne",
-                            email = "bruce@wayneenterprise.com")
-        session['tickets'] = [
-                Ticket( name = "Batman", ticket_type = TicketType.objects.get(name = "Standard ticket")),
-                Ticket( name = "Catwoman", ticket_type = TicketType.objects.get(name = "Standard ticket")) ]
+        session['invoice_id'] = self.invoice_id
         session.save()
         self.assertContains(self.client.get('/confirm/'), "Bruce Wayne" )
         self.assertContains(self.client.get('/confirm/'), "bruce@wayneenterprise.com" )
@@ -66,12 +59,7 @@ class TestConfirmationView(TestCase):
         Test that the view displays the total amount
         """
         session = self.client.session
-        session['ticket-purchase'] = \
-            TicketPurchase( name = "Bruce Wayne",
-                            email = "bruce@wayneenterprise.com")
-        session['tickets'] = [
-                Ticket( name = "Batman", ticket_type = TicketType.objects.get(name = "Standard ticket")),
-                Ticket( name = "Catwoman", ticket_type = TicketType.objects.get(name = "Standard ticket")) ]
+        session['invoice_id'] = self.invoice_id
         session.save()
         self.assertContains(self.client.get('/confirm/'), "<b>Total:</b> 200 SEK" )
 
