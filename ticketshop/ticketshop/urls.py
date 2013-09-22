@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from tickets.views import purchase_tickets, confirmation
+from ticketapp.views import purchase_tickets, confirmation
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
