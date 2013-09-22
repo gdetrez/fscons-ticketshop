@@ -9,6 +9,7 @@ class TicketPurchaseForm(ModelForm):
         widgets = {
           'name': TextInput(attrs={'class':'form-control'}),
           'email': TextInput(attrs={'class':'form-control'}),
+          'additional_contribution': TextInput(attrs={'class':'form-control col-lg-3'}),
           }
 
 

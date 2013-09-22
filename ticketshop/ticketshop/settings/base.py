@@ -191,6 +191,8 @@ DJANGO_APPS = (
     'django.contrib.admin',
     # 'django.contrib.admindocs',
 
+    'paypal.standard.ipn',
+
     'ticketapp',
     'coupons',
 )
@@ -246,3 +248,7 @@ LOGGING = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
+
+########## PAYPAL CONFIGURATION
+PAYPAL_RECEIVER_EMAIL = "paypal@fscons.org"
+########## END PAYPAL CONFIGURATION

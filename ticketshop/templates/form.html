@@ -79,6 +79,24 @@
         </div>
         {% endfor %}
       </fieldset>
+
+      <fieldset><legend>Payment details</legend>
+          <div class="form-group">
+              <label for="inputEmail1" class="col-lg-2 control-label">
+                  {{ form.additional_contribution.label }}
+              </label>
+              <div class="col-lg-10">
+                  {{ form.additional_contribution }}
+                  <span class="help-block">
+                      {{ form.additional_contribution.help_text }}
+                  </span>
+                  {% for error in form.additional_contribution.errors %}
+                  <span class="help-block">{{ error|escape }}</span>
+                  {% endfor %}
+              </div>
+          </div>
+      </fieldset>
+
       <div class="control-group row">
         <button type="submit" class="btn btn-primany col-lg-6 col-md-offset-3" id="checkout">
             Checkout

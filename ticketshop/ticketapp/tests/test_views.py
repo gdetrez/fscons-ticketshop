@@ -74,3 +74,8 @@ class TestConfirmationView(TestCase):
                 Ticket( name = "Catwoman", ticket_type = TicketType.objects.get(name = "Standard ticket")) ]
         session.save()
         self.assertContains(self.client.get('/confirm/'), "<b>Total:</b> 200 SEK" )
+
+class TestPaypalView(TestCase):
+    def test_2(self):
+        client = Client()
+        client.get("/paypal/")

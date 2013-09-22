@@ -5,9 +5,9 @@
 <h3>Contact details</h3>
 <dl>
     <dt>Name</dt>
-    <dd> {{ details.name }} <dd>
+    <dd> {{ purchase.name }} <dd>
     <dt>email</dt>
-    <dd>{{ details.email }}</dd>
+    <dd>{{ purchase.email }}</dd>
 </dl>
 <h3> Tickets </h3>
 <table class="table">
@@ -16,7 +16,7 @@
         <th> Ticket type </th>
         <th class="text-right"> Price </th>
     </tr>
-    {% for ticket in tickets %}
+    {% for ticket in purchase.ticket_set.all %}
     <tr>
         <td>{{ ticket.name}}</td>
         <td>{{ ticket.ticket_type.name }}</td>
@@ -27,14 +27,12 @@
     <tr>
         <td></td>
         <td></td>
-        <td class="text-right"><b>Total:</b> {{ total }} SEK</td>
+        <td class="text-right"><b>Total:</b> {{ purchase.price }} SEK</td>
 </table>
 
 <div class="row">
     <a href="/" class="btn btn-default col-lg-2" > Go back </a>
-    <button type="submit" class="btn btn-primary col-lg-4 col-md-offset-6" >
-        Pay with paypal
-    </button>
+    <div class="col-lg-4 col-md-offset-6"> {{ paypal.render }} </div>
 </div>
 
 <div class="row">
