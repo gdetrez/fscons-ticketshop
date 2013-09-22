@@ -56,11 +56,16 @@ class TicketTest(TestCase):
 
     def setUp(self):
         self.tt = TicketType( name = "Normal ticket", price = 10)
+        self.tt = TicketType( name = "Expensive ticket", price = 1000)
         self.tt.save()
 
     def test_canCreateAndSave(self):
         t = Ticket( name = "Johny", ticket_type = self.tt )
         t.save()
+
+    def test_defaultTicketType(self):
+        t = Ticket( name = "Johny" )
+        self.assertEqual("Expensive ticket", t.ticket_type.name)
 
 class TicketPurchaseTest(TestCase):
 
