@@ -3,7 +3,7 @@ test:
 
 resetdb:
 	rm -rf ticketshop/default.db
-	python manage.py syncdb --noinput
-	python manage.py loaddata admin.json
+	python ticketshop/manage.py syncdb --noinput
+	python ticketshop/manage.py loaddata admin.json
 
 .PHONY: test
