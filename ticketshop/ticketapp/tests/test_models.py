@@ -6,8 +6,7 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from ..models import TicketType, Ticket, TicketPurchase
-from coupons.models import Coupon
+from ..models import TicketType, Ticket, TicketPurchase, Coupon
 
 class TicketTypeTest(TestCase):
 
@@ -52,6 +51,7 @@ class TicketTypeTest(TestCase):
         Ticket( name = "Captain Haddock", ticket_type = tt).save()
         self.assertFalse(tt.available())
 
+
 class TicketTest(TestCase):
 
     def setUp(self):
@@ -66,6 +66,29 @@ class TicketTest(TestCase):
     def test_defaultTicketType(self):
         t = Ticket( name = "Johny" )
         self.assertEqual("Expensive ticket", t.ticket_type.name)
+
+
+class CouponModelTest(TestCase):
+    def test_can_create(self):
+        """
+        Test that we can create coupons
+        """
+        Coupon.objects.create( code = "ABC123", percentage = 20)
+
+    def test_applyReduction(self):
+        """
+        Test the application of the percentage on a price
+        """
+        coupon = Coupon.objects.create( code = "ABC123", percentage = 20)
+        self.assertEqual(80, coupon.apply(100))
+
+    def test_unicode(self):
+        """
+        Test that the coupon's unicode is the same as the coupon code
+        """
+        coupon = Coupon.objects.create( code = u"ABC123", percentage = 10 )
+        self.assertEqual(u"ABC123", unicode(coupon))
+
 
 class TicketPurchaseTest(TestCase):
 

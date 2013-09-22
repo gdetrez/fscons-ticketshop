@@ -1,7 +1,6 @@
 from uuid import uuid4
 from django.db import models
 from django.core.exceptions import ValidationError
-from coupons.models import Coupon
 from django.core.mail import send_mail
 from paypal.standard.ipn.signals import payment_was_successful, payment_was_flagged
 
@@ -35,6 +34,17 @@ class Ticket(models.Model):
     name = models.CharField(max_length=200)
     ticket_type = models.ForeignKey(TicketType, default=default_ticket_type)
     purchase = models.ForeignKey("TicketPurchase", null = True, blank = True)
+
+class Coupon(models.Model):
+    code = models.CharField( max_length = 10, primary_key=True )
+    percentage = models.IntegerField()
+    active = models.BooleanField( default = True )
+
+    def apply(self, price):
+        return price * (100 - self.percentage) / 100
+
+    def __unicode__(self):
+        return unicode(self.code)
 
 class TicketPurchase(models.Model):
     ## Contact details

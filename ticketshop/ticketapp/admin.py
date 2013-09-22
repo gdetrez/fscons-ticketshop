@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TicketPurchase, Ticket, TicketType
+from .models import TicketPurchase, Ticket, TicketType, Coupon
 
 class TicketInline(admin.TabularInline):
     model = Ticket
@@ -15,3 +15,8 @@ class TicketPurchaseAdmin(admin.ModelAdmin):
 
 admin.site.register(TicketPurchase, TicketPurchaseAdmin)
 admin.site.register(TicketType)
+
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ('code', 'percentage', 'active')
+
+admin.site.register(Coupon, CouponAdmin)
