@@ -45,7 +45,7 @@ def purchase_tickets(request):
         tickets = [model_to_dict(t) for t in request.session['tickets']]
         print tickets
         formset = TicketFormSet(initial=tickets)
-    return render_to_response("tickets/ticketpurchase_form.html", {
+    return render_to_response("form.html", {
         "form": form,
         "formset": formset,
         }, context_instance=RequestContext(request))
@@ -55,7 +55,7 @@ def confirmation(request):
     This view shows the user what she is about to buy
     """
     if 'ticket-purchase' in request.session:
-        return render_to_response("tickets/confirm.html", {
+        return render_to_response("confirm.html", {
             "details": request.session['ticket-purchase'],
             "tickets": request.session['tickets'],
             "total":   sum([ t.ticket_type.price for t in request.session['tickets']])
