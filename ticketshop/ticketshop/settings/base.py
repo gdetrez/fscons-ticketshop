@@ -194,7 +194,6 @@ DJANGO_APPS = (
     'paypal.standard.ipn',
 
     'ticketapp',
-    'coupons',
 )
 
 THIRD_PARTY_APPS = (
