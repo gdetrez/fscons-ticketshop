@@ -1,14 +1,12 @@
 {% extends "layout.html" %}
 
 {% block "content" %}
-<h2>Order summary</h2>
-<h3>Contact details</h3>
-<dl>
-    <dt>Name</dt>
-    <dd> {{ purchase.name }} <dd>
-    <dt>email</dt>
-    <dd>{{ purchase.email }}</dd>
-</dl>
+<h4>Hej {{ purchase.name }}!</h4>
+
+<p>Here is a summary of your ticket purchase, please make sure that everything is in order before paying.
+
+<p>We'll email you at <b>{{ purchase.email }}</b> with a confirmation once the transaction is fully processed.
+
 <h3> Tickets </h3>
 <table class="table">
     <tr>
@@ -35,16 +33,20 @@
     </tr>
 </table>
 
-<div class="row">
-    <a href="/" class="btn btn-default col-lg-2" > Go back </a>
-    <div class="col-lg-3 col-md-offset-7"> {{ paypal.render }} </div>
-</div>
 
 <div class="row">
-    <span class="col-md-offset-8 col-lg-4 text-right">
-        <a href="#">I don't want to use PayPal </a>
-    </span>
-    <a href="" >
+    <div class="col-lg-3 col-md-offset-9"> {{ paypal.render }} </div>
 </div>
+
+<h3>Don't want to use PayPal?</h3>
+<p>If you don't want to use paypal, we also accept bank transfers. You can transfer the amount (<b>{{ purchase.price }} kr</b>) to one of he following account. <b>Please enter FSCONS and your email address in the comment to help us identify your order.</b>
+
+<ul>
+  <li><b>Plusgiro:</b> 47 78 84-1
+  <li><b>Bankgiro:</b> 311-5060
+  <li><b>IBAN:</b> SE27 9500 0099 6026 0477 8841 (<b>BIC:</b> NDEASESS)
+</ul>
+
+<p>If you bought at least one buisness tickets and you wish to pay by invoice, please contact us at <a href="mailto:info@fscons.org">info@fscons.org</a> with your invoice address.
 
 {% endblock %}
