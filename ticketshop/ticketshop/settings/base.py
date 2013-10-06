@@ -20,7 +20,6 @@ SITE_NAME = basename(DJANGO_ROOT)
 path.append(DJANGO_ROOT)
 path.append(join(dirname(dirname(DJANGO_ROOT)), "django-paypal"))
 ########## END PATH CONFIGURATION
-print path
 
 ########## DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
