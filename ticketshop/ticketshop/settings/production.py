@@ -76,3 +76,13 @@ STATIC_ROOT = normpath('/var/www/tickets.fscons.org/static/')
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = get_env_setting('SECRET_KEY')
 ########## END SECRET CONFIGURATION
+
+
+######## SENTRY
+# Set your DSN value
+RAVEN_CONFIG = {
+    'dsn': 'https://a9e3b747fd16468b87c2aa0285f3a958:ca8dcb1b35104c0583b2c8b312df2635@app.getsentry.com/14028',
+    }
+
+# Add raven to the list of installed apps
+INSTALLED_APPS = INSTALLED_APPS + ( 'raven.contrib.django.raven_compat',)
