@@ -10,7 +10,7 @@ from django.contrib.sites.models import Site
 from functools import wraps
 from paypal.standard.forms import PayPalPaymentsForm
 
-from .forms import TicketPurchaseForm, TicketFormSet, TicketForm
+from .forms import TicketPurchaseForm, TicketForm
 from .models import TicketPurchase
 
 
