@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', purchase_tickets),
-    url(r'^confirm/$', confirmation),
+    url(r'^confirm/$', confirmation, name='confirm'),
     url(r'^success/$',
             TemplateView.as_view(template_name="paypal_return.html"),
             name='paypal-return'),

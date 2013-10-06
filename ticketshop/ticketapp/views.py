@@ -82,9 +82,9 @@ def confirmation(request, purchase):
         "notify_url":
             "http://%s%s" % (site.domain, reverse('paypal-ipn')),
         "return_url":
-            "http://%s%s" % (site.domain, reverse('paypal-success')),
+            "http://%s%s" % (site.domain, reverse('paypal-return')),
         "cancel_return":
-            "http://%s%s" % (site.domain, reverse('paypal-cancel')),
+            "http://%s%s" % (site.domain, reverse('confirm')),
         }
     form = PayPalPaymentsForm(initial=paypal_dict)
     return render_to_response("confirm.html", {
