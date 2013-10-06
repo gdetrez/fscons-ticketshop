@@ -10,7 +10,7 @@ from django.contrib.sites.models import Site
 from functools import wraps
 from paypal.standard.forms import PayPalPaymentsForm
 
-from .forms import TicketPurchaseForm, TicketFormSet
+from .forms import TicketPurchaseForm, TicketFormSet, TicketForm
 from .models import TicketPurchase
 
 
@@ -18,40 +18,34 @@ def purchase_tickets(request):
     """
     This view displays the form to purchase tickets
     """
-    form = TicketPurchaseForm()
-    formset = TicketFormSet(instance=TicketPurchase())
     if request.POST:
+        form = TicketPurchaseForm(request.POST)
+        n = int(request.POST['ticket_count']) # Number of ticket.
+        ticket_forms = [TicketForm( request.POST, prefix="ticket%d" % i )
+                          for i in range(n) ]
         if 'plus' in request.POST:
-            cp = request.POST.copy()
-            cp['ticket_set-TOTAL_FORMS'] = int(cp['ticket_set-TOTAL_FORMS'])+ 1
-            form = TicketPurchaseForm(cp)
-            formset = TicketFormSet(cp, instance=TicketPurchase())
+            ticket_forms.append(
+                    TicketForm( prefix="ticket%d" % len(ticket_forms) ) )
         elif 'minus' in request.POST:
-            cp = request.POST.copy()
-            cp['ticket_set-TOTAL_FORMS'] = max(1, int(cp['ticket_set-TOTAL_FORMS']) - 1)
-            form = TicketPurchaseForm(cp)
-            formset = TicketFormSet(cp, instance=TicketPurchase())
-        else:
-            form = TicketPurchaseForm(request.POST)
-            if form.is_valid():
-                purchase = form.save(commit=False)
-                formset = TicketFormSet(request.POST, instance=purchase)
-                if formset.is_valid():
-                    purchase.save()
-                    formset.save()
-                    request.session['invoice_id'] = purchase.invoice_id
-                    return HttpResponseRedirect('/confirm/')
-            else:
-                formset = TicketFormSet(request.POST, instance=TicketPurchase())
-    elif 'ticket-purchase' in request.session:
-        pass
-        #form = TicketPurchaseForm(instance=request.session['ticket-purchase'])
-        #tickets = [model_to_dict(t) for t in request.session['tickets']]
-        #print tickets
-        #formset = TicketFormSet(initial=tickets)
+            if len(ticket_forms) > 1: ticket_forms.pop()
+            else: messages.warning(request, 'Your have to buy at least one ticket.')
+        elif form.is_valid() and all( tf.is_valid() for tf in ticket_forms ):
+            purchase = form.save()
+            print ticket_forms
+            for tf in ticket_forms:
+                ticket = tf.save( commit = False )
+                ticket.purchase = purchase
+                ticket.save()
+                print "ticket saved: %s" % ticket
+            request.session['invoice_id'] = purchase.invoice_id
+            return HttpResponseRedirect('/confirm/')
+
+    else:
+        form = TicketPurchaseForm()
+        ticket_forms = [ TicketForm( prefix = "ticket0" ) ] # By default, 1 ticket
     return render_to_response("form.html", {
         "form": form,
-        "formset": formset,
+        "ticket_forms": ticket_forms,
         }, context_instance=RequestContext(request))
 
 

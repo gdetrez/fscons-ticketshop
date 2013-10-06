@@ -31,8 +31,8 @@ def default_ticket_type():
         return None
 
 class Ticket(models.Model):
-    name = models.CharField(max_length=200)
     ticket_type = models.ForeignKey(TicketType, default=default_ticket_type)
+    name = models.CharField(max_length=200)
     purchase = models.ForeignKey("TicketPurchase", null = True, blank = True)
 
 class Coupon(models.Model):

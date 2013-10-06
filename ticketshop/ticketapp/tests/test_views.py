@@ -4,8 +4,7 @@ from django.contrib.messages.storage.base import Message
 from django.contrib.messages.constants import ERROR
 
 from django.test import TestCase
-from ..models import TicketType, Ticket, TicketPurchase
-from coupons.models import Coupon
+from ..models import TicketType, Ticket, TicketPurchase, Coupon
 
 class TicketPurchaseViewTest(TestCase):
 

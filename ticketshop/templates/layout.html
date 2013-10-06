@@ -35,10 +35,14 @@
   <div class="wrapper container" id="main">
     <h1>FSCONS 2013 tickets</h1>
     {% for message in messages %}
-    <div class="alert {% if 'error' in message.tags %}alert-danger{% endif %}">{{ message }}</div>
+    <div class="alert {% if 'error' in message.tags %}alert-danger{% endif %} {% if 'warning' in message.tags %}alert-warning{% endif %}">
+      {{ message }}
+    </div>
     {% endfor %}
     {% block "content" %}{% endblock %}
   </div>
 </div>
 
-
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+    </html>

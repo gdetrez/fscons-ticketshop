@@ -16,16 +16,39 @@
 
   <fieldset><legend>Tickets</legend>
     {{ formset.management_form }}
+
+    {% for error in formset.non_form_errors %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endfor %}
+
+    <input type="hidden" name="ticket_count" value="{{ ticket_forms|length }}">
+    {% for ticket_form in ticket_forms %}
+      <div class="row" style="margin-bottom:1em" >
+        {% for field in ticket_form %}
+        <div class="input-group col-lg-5 {% if field.errors%}has-error{% endif %}">
+          <span class="input-group-addon">{{ field.label }}</span>
+          {{ field }}
+        </div>
+        {% endfor %}
+        {% if forloop.last %}
+          <div class="col-lg-2">
+            <div class="btn-group">
+              <button type="submit" name="minus" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></button>
+              <button type="submit" name="plus" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+          </div>
+        {% endif %}
+        </div>
+      {% endfor %}
     {% for f in formset %}
     {{ f.id }}
     <div class="row" style="margin-bottom:1em" >
-      <div class="input-group col-lg-5 {% if f.name.errors%}has-error{% endif %}">
-        <span class="input-group-addon">name: </span>
-        {{ f.name }}
+      {% for field in f %}
+      <div class="input-group col-lg-5 {% if field.errors%}has-error{% endif %}">
+        <span class="input-group-addon">{{ field.label }}</span>
+        {{ field }}
       </div>
-      <div class="col-lg-5 {% if f.ticket_type.errors%}has-error{% endif %}">
-        {{ f.ticket_type }}
-      </div>
+      {% endfor %}
       {% if forloop.last %}
       <div class="col-lg-2">
         <div class="btn-group">
