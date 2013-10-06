@@ -9,8 +9,12 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', purchase_tickets),
     url(r'^confirm/$', confirmation),
-    url(r'^success/$', success, name='paypal-success'),
-    url(r'^cancel/$', cancel, name='paypal-cancel'),
+    url(r'^success/$',
+            TemplateView.as_view(template_name="paypal_return.html"),
+            name='paypal-return'),
+    url(r'^cancel/$',
+            TemplateView.as_view(template_name="paypal_cancel.html"),
+            name='paypal-cancel'),
     url(r'^api/paypal/bofasdflkjsdf/', include('paypal.standard.ipn.urls'), name="paypal-ipn"),
 
     # Examples:
