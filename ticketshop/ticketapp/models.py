@@ -80,53 +80,20 @@ class TicketPurchase(models.Model):
 # Payment handling
 ###############################################################################
 class IPNHandler(object):
-    NOTYFY_ADDRESS = "paypal@fscons.org"
+    import logging
+    log = logging.getLogger("IPN handler")
 
     def __init__(self, sender=None, **kwargs):
         self.ERROR = None
         self.ipn = sender
-        self.purchase = None
-        try:
-            self.purchase = Registration.objects.get( invoice_id = self.ipn.invoice)
-            assert not self.registration.paid, "This ticket is already marked as paid..."
-            assert self.ipn.payment_status == "Completed", \
-                "Payment status is " + self.ipn.payment_status
-            assert not self.ipn.flag, "IPN is flagged"
-            assert self.registration.total() >= self.ipn.mc_gross, "Payment too low"
-            self.registration.mark_as_paid()
-            self.success()
-        except Registration.DoesNotExist:
-            self.fail("Couldn't find a matching registration object")
-        except AssertionError, e:
-            self.fail(str(e))
- 
-    def fail(self, error):
-        self.ERROR = error
-        mail = loader.get_template('registration_mail_ipn_fail.txt')
-        send_mail(
-            "[FSCONS'12][Paypal] IPN fail",
-            mail.render(self._context({'error':error})),
-            self.NOTYFY_ADDRESS,
-            [self.NOTYFY_ADDRESS],
-            fail_silently=False)
- 
-    def success(self):
-        mail = loader.get_template('registration_mail_ipn_success.txt')
-        send_mail(
-            "[FSCONS'12][Paypal] IPN success",
-            mail.render(self._context()),
-            self.NOTYFY_ADDRESS,
-            [self.NOTYFY_ADDRESS],
-            fail_silently=False)
- 
-    def _context(self, params={}):
-        defaults = {
-            'registration': self.registration,
-            'ipn': self.ipn,
-            'site': Site.objects.get_current(),
-            }
-        defaults.update(params)
-        return Context(defaults)
- 
+        purchase = TicketPurchase.objects.get( invoice_id = self.ipn.invoice)
+        assert not purchase.paid, "This ticket is already marked as paid..."
+        assert self.ipn.payment_status == "Completed", \
+            "Payment status is " + self.ipn.payment_status
+        assert purchase.price() <= self.ipn.mc_gross, "Wrong amount: %f instead of %d" % (self.ipn.mc_gross, purchase.price())
+        purchase.paid = True
+        purchase.save()
+        self.log.info("TicketPurchase %i paid with paypal" % purchase.pk )
+
 payment_was_successful.connect(IPNHandler)
 payment_was_flagged.connect(IPNHandler)
