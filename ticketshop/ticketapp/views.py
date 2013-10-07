@@ -11,7 +11,7 @@ from functools import wraps
 from paypal.standard.forms import PayPalPaymentsForm
 
 from .forms import TicketPurchaseForm, TicketForm
-from .models import TicketPurchase
+from .models import TicketPurchase, TicketType
 
 
 def purchase_tickets(request):
@@ -44,6 +44,7 @@ def purchase_tickets(request):
         form = TicketPurchaseForm()
         ticket_forms = [ TicketForm( prefix = "ticket0" ) ] # By default, 1 ticket
     return render_to_response("form.html", {
+        "ticket_types": TicketType.objects.all(),
         "form": form,
         "ticket_forms": ticket_forms,
         }, context_instance=RequestContext(request))

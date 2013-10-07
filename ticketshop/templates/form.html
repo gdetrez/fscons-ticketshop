@@ -1,7 +1,27 @@
 {% extends "layout.html" %}
 
 {% block "content" %}
-<form role="form" action="" method="POST">
+
+<p>Join us during our three day program, starting with relevant workshops on
+the Friday and continuing with two full days of talks and social events where
+you meet, greet, and share information in areas related to our three pillars:
+Society, Technology and Culture.
+
+<p>We have three different registration options, so take your pick and see you
+in Gothenburg, Sweden in November!
+
+<dl>
+  {% for ticket_type in ticket_types %}
+  <dt>{{ ticket_type.name }}
+  <dd>{{ ticket_type.description }}
+  {% endfor %}
+</dl>
+
+<p>If you encounter any problems while registering, we would appreciate your
+feedback so that we can ensure that the problems are corrected. Please email
+info@fscons.org in this case, of if you wish to register in another way.
+
+<form role="form" action="" method="POST" style="background:#F8F8F8;padding: 1em">
   {% csrf_token %}
   <fieldset><legend>Contact details</legend>
     {% include "bootstrap-form-group.html" with field=form.name %}
