@@ -6,7 +6,7 @@ class TicketInline(admin.TabularInline):
     extra = 1
 
 class TicketPurchaseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'number_of_tickets', 'price', 'paid')
+    list_display = ('name', 'email', 'number_of_tickets', 'price', 'invoice_id', 'paid')
     date_hierarchy = 'creation_date'
     inlines = [TicketInline]
     list_editable = ('paid',)
