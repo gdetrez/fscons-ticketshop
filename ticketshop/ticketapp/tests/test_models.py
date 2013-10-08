@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This file demonstrates writing tests using the unittest module. These will pass
 when you run "manage.py test".
@@ -21,7 +22,7 @@ class TicketTypeTest(TestCase):
     def test_unicode(self):
         tt = TicketType( name = "Test Ticket", price = 30,
             description = "This is a test ticket")
-        self.assertEqual(u"Test Ticket (30:-)", unicode(tt))
+        self.assertEqual(u"Test Ticket — 30 SEK", unicode(tt))
 
     def test_ticketWithoutLimitIsAvailable(self):
         tt = TicketType( name = "Test Ticket", price = 30,
