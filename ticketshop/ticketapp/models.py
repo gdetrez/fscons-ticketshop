@@ -14,7 +14,7 @@ class TicketType(models.Model):
     limit = models.IntegerField( null = True, blank = True )
 
     def __unicode__(self):
-      return u"%s — %d SEK" % (self.name, self.price)
+      return u"%s" % (self.name)
 
     def available(self, n=1):
         if self.limit is None:
