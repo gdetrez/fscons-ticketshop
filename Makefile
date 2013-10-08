@@ -1,3 +1,6 @@
+unittest:
+	coverage run ticketshop/manage.py test --settings=ticketshop.settings.test ticketapp
+
 test:
 	coverage run ticketshop/manage.py test --settings=ticketshop.settings.test
 
