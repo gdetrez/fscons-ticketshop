@@ -19,6 +19,6 @@ deploy:
 	$(call remote_django, syncdb --noinput)
 	$(call remote_django, migrate)
 	$(call remote_django, loaddata $(REMOTE_ROOT)/sites.json)
-	$(call remote, sudo supervisorctl restart ticketshop)
+	$(call remote, supervisorctl restart ticketshop)
 
 .PHONY: test
