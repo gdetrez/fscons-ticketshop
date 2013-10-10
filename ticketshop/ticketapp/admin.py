@@ -11,7 +11,7 @@ class TicketPurchaseAdmin(admin.ModelAdmin):
     inlines = [TicketInline]
     list_editable = ('paid',)
     list_filter = ['paid','coupon', 'ticket__ticket_type']
-    search_fields = ['name', 'email', 'additional_information', '']
+    search_fields = ['name', 'email', 'additional_information', 'invoice_id']
 
 admin.site.register(TicketPurchase, TicketPurchaseAdmin)
 admin.site.register(TicketType)
