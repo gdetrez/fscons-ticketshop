@@ -88,9 +88,9 @@ class IPNHandler(object):
         self.ERROR = None
         self.ipn = sender
         purchase = TicketPurchase.objects.get( invoice_id = self.ipn.invoice)
-        if ipn.test_ipn:
+        if self.ipn.test_ipn:
           return
-        assert not purchase.paid, "This ticket is already marked as paid..."
+        #assert not purchase.paid, "This ticket is already marked as paid..."
         assert self.ipn.payment_status == "Completed", \
             "Payment status is " + self.ipn.payment_status
         assert purchase.price() <= self.ipn.mc_gross, "Wrong amount: %f instead of %d" % (self.ipn.mc_gross, purchase.price())
