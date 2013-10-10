@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from paypal.standard.ipn.signals import payment_was_successful, payment_was_flagged
+from .signals import purchase_paid
 
 # Create your models here.
 
@@ -76,6 +77,14 @@ class TicketPurchase(models.Model):
     def number_of_tickets(self):
         return self.ticket_set.count()
 
+    def mark_as_paid(self):
+        """
+        Mark an unpaid purchase as paid and send a purchase_paid signal
+        """
+        if not self.paid:
+            self.paid = True
+            self.save( update_fields=['paid'] )
+            purchase_paid.send(sender=self, purchase=self)
 
 ###############################################################################
 # Payment handling

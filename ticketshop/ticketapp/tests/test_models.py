@@ -137,3 +137,16 @@ class TicketPurchaseTest(TestCase):
         p.ticket_set.create( name = "George Banks",
             ticket_type = TicketType.objects.get(name = "Expensive ticket"))
         self.assertEquals(3, p.number_of_tickets())
+
+
+from ..signals import purchase_paid
+from mock import Mock, ANY
+class PaymentReceivedSignalTest(TestCase):
+
+    def test_markingATicketPurchaseAsPaidSendTheSignal(self):
+        receiver = Mock()
+        purchase_paid.connect(receiver)
+        p = TicketPurchase.objects.create(
+            name = "Mary Popins", email = "mp@clouds.org")
+        p.mark_as_paid()
+        receiver.assert_called_once_with(sender=ANY, purchase=p, signal=ANY)
