@@ -1,10 +1,10 @@
 unittest:
 	coverage run ticketshop/manage.py test --settings=ticketshop.settings.test ticketapp
-	coverage report -m
+	coverage report -m --include='ticketshop*'
 
 test:
 	coverage run ticketshop/manage.py test --settings=ticketshop.settings.test
-	coverage report -m
+	coverage report -m --include='ticketshop*'
 
 resetdb:
 	rm -rf ticketshop/default.db
