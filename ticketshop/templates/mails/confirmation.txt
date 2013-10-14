@@ -1,17 +1,16 @@
 Dear {{ purchase.name }},
 
-We have now received your payment and process your order. If you need 
-information about transport and accomodation, we invite you to look at our 
-practical information pages: http://fscons.org/2012/information/ if you have 
-any other question, fell free to contact us at info@fscons.org or by 
+We have now received your payment and processed your order. If you need
+information about transport and accomodation, we invite you to look at our
+practical information pages: http://fscons.org/2013/ and if you have
+any other question, fell free to contact us at info@fscons.org or by
 replying to this message.
 
 --------------------------
 TICKETS INFORMATION
 
 {% for ticket in purchase.ticket_set.all %}
-{{ ticket.name }} ({{ ticket.ticket_type.name }})
-{% endfor %}
+{{ ticket.name }} ({{ ticket.ticket_type.name }}){% endfor %}
 --------------------------
 
 Vi ses i Göteborg!
