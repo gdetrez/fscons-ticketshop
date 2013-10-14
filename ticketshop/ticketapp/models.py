@@ -59,7 +59,7 @@ class TicketPurchase(models.Model):
     coupon = models.ForeignKey(Coupon, null = True, blank = True)
     additional_contribution = models.IntegerField( default=0, blank=True,
         help_text = "We try to make the conference affordable for as many people as possible. Consider chipping in extra, if you can, to help keep it that way.")
-    paid = models.BooleanField(default = False)
+    paid = models.BooleanField(default = False, editable = False)
     ## Administrativia
     creation_date = models.DateTimeField(editable = False, auto_now_add = True)
     invoice_id = models.CharField(

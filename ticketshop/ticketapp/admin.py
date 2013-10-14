@@ -15,7 +15,6 @@ class TicketPurchaseAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'number_of_tickets', 'price', 'invoice_id', 'paid')
     date_hierarchy = 'creation_date'
     inlines = [TicketInline]
-    list_editable = ('paid',)
     list_filter = ['paid','coupon', 'ticket__ticket_type']
     search_fields = ['name', 'email', 'additional_information', 'invoice_id']
     actions = [mark_selected_paid]
