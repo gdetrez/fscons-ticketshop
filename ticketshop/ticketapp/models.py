@@ -103,8 +103,7 @@ class IPNHandler(object):
         assert self.ipn.payment_status == "Completed", \
             "Payment status is " + self.ipn.payment_status
         assert purchase.price() <= self.ipn.mc_gross, "Wrong amount: %f instead of %d" % (self.ipn.mc_gross, purchase.price())
-        purchase.paid = True
-        purchase.save()
+        purchase.mark_as_paid()
         self.log.info("TicketPurchase %i paid with paypal" % purchase.pk )
 
 payment_was_successful.connect(IPNHandler)
