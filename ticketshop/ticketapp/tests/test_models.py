@@ -146,7 +146,7 @@ class TicketPurchaseTest(TestCase):
         self.assertEquals(3, p.number_of_tickets())
 
 
-from ..signals import purchase_paid
+from ..models import purchase_paid
 from mock import Mock, ANY
 class PaymentReceivedSignalTest(TestCase):
 

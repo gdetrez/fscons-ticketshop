@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-from paypal.standard.ipn.signals import payment_was_successful, payment_was_flagged
-from .signals import purchase_paid
+from django.dispatch import Signal
 
-# Create your models here.
+from paypal.standard.ipn.signals import payment_was_successful, payment_was_flagged
+
+from .mails import send_confirmation_email
+
 
 class TicketType(models.Model):
     name  = models.CharField(max_length=200)
@@ -89,9 +92,16 @@ class TicketPurchase(models.Model):
             self.save( update_fields=['paid'] )
             purchase_paid.send(sender=self, purchase=self)
 
-###############################################################################
-# Payment handling
-###############################################################################
+
+# ~~~ Custom signals ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+purchase_paid = Signal(providing_args=["purchase"])
+
+# ~~~ Signal handlers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def send_mail_on_paiement(sender, purchase, **kwargs):
+    send_confirmation_email(purchase)
+purchase_paid.connect(send_mail_on_paiement)
+
+# ~~~ Payment handling
 class IPNHandler(object):
     import logging
     log = logging.getLogger("IPN handler")
