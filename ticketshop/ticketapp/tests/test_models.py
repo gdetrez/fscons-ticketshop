@@ -98,6 +98,13 @@ class TicketPurchaseTest(TestCase):
         TicketType( name = "Normal ticket", price = 10).save()
         TicketType( name = "Cheap ticket", price = 1).save()
 
+    def test_unicode(self):
+        p = TicketPurchase.objects.create(
+            name = "Mary Popins", email = "mp@clouds.org")
+        p.ticket_set.create( name = "Mary Popins",
+            ticket_type = TicketType.objects.get(name = "Normal ticket"))
+        self.assertEqual( unicode(p), u"Mary Popins (1 ticket(s))" )
+
     def test_canCreatePurchase(self):
         p = TicketPurchase.objects.create(
             name = "Mary Popins", email = "mp@clouds.org")

@@ -65,6 +65,9 @@ class TicketPurchase(models.Model):
     invoice_id = models.CharField(
                     max_length=36, default=uuid4, editable=False, unique=True)
 
+    def __unicode__(self):
+        return u"%s (%d ticket(s))" % ( self.name, self.number_of_tickets() )
+
     def price(self):
         p = 0
         for ticket in self.ticket_set.all():
