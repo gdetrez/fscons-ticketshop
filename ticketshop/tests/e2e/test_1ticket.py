@@ -20,5 +20,3 @@ class E2ETests(LiveServerTestCase):
         self.selenium.find_element_by_id('id_email').send_keys('bruce@wayne.com')
         self.selenium.find_element_by_id('checkout').click()
         sleep(2)
-        assert False
-
