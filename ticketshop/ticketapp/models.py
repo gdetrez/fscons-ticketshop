@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_admins
 from django.dispatch import Signal
 
 from paypal.standard.ipn.signals import payment_was_successful, payment_was_flagged
@@ -120,4 +120,11 @@ class IPNHandler(object):
         self.log.info("TicketPurchase %i paid with paypal" % purchase.pk )
 
 payment_was_successful.connect(IPNHandler)
-payment_was_flagged.connect(IPNHandler)
+
+def alert_flagged_payment(sender,**kwargs):
+    mail_admins("Flagged IPN",
+      "Paypal IPN has been flagged.\n" + \
+      "https://tickets.fscons.org/admin/ipn/paypalipn/%d/\n" % sender.pk + \
+      "https://tickets.fscons.org/admin/ticketapp/ticketpurchase/?q=%s\n" % sender.invoice
+      )
+payment_was_flagged.connect(alert_flagged_payment)
