@@ -1,14 +1,25 @@
 from django.contrib import admin
 from .models import TicketPurchase, Ticket, TicketType, Coupon
 
+# ~~~ Ticket purchase ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TicketInline(admin.TabularInline):
+    """
+    This is used to displayed the purchased ticket inline in the
+    page showing the details of a single purchase
+    """
     model = Ticket
     extra = 1
 
 def mark_selected_paid(modeladmin, request, queryset):
+    """
+    Custom action that marks a bunch of tickets as paid
+    using the mark_as_paid function that takes care of
+    sending the cenfirmation email
+    """
     for purchase in queryset:
         purchase.mark_as_paid()
-mark_selected_paid.short_description = "Mark selected stories as paid"
+mark_selected_paid.short_description = "Mark selected as paid"
+
 
 
 class TicketPurchaseAdmin(admin.ModelAdmin):
