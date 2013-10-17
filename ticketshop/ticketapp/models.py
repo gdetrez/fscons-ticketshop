@@ -59,7 +59,8 @@ class TicketPurchase(models.Model):
     additional_information = models.TextField( blank=True,
         help_text="Do not hesitate to let us know if you have specific requirements or comments about the registration.")
     ## Payment details
-    coupon = models.ForeignKey(Coupon, null = True, blank = True)
+    coupon = models.ForeignKey(Coupon, null = True, blank = True,
+        help_text="If you have a discount coupon, enter the code here.")
     additional_contribution = models.IntegerField( default=0, blank=True,
         help_text = "We try to make the conference affordable for as many people as possible. Consider chipping in extra, if you can, to help keep it that way.")
     paid = models.BooleanField(default = False, editable = False)
