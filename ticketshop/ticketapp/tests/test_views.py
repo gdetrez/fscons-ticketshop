@@ -12,16 +12,13 @@ class TicketPurchaseViewTest(TestCase):
         """
         Test that we can get the purchase form
         """
-        client = Client()
-        self.assertContains(client.get("/"), "name")
+        self.assertContains(self.client.get("/"), "name")
 
 class TestConfirmationView(TestCase):
 
     def setUp(self):
         # It appears that client.session only work
-        # for non annonymous users
-        self.client = Client()
-        # Setup Test User
+        # for non annonymous users: setup Test User
         User.objects.create_user('user', 'user@site.com', 'password')
         # Login
         self.client.login(username='user', password='password')
@@ -64,5 +61,4 @@ class TestConfirmationView(TestCase):
 
 class TestPaypalView(TestCase):
     def test_2(self):
-        client = Client()
-        client.get("/paypal/")
+        self.client.get("/paypal/")
