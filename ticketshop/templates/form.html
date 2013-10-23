@@ -12,8 +12,10 @@ in Gothenburg, Sweden in November!
 
 <dl>
   {% for ticket_type in ticket_types %}
-  <dt>{{ ticket_type.name }} — {{ ticket_type.price }} SEK
-  <dd>{{ ticket_type.description }}
+  <dt {% if not ticket_type.available %}style="text-decoration:line-through"{% endif %}>
+    {{ ticket_type.name }} — {{ ticket_type.price }} SEK
+  <dd {% if not ticket_type.available %}style="text-decoration:line-through"{% endif %}>
+    {{ ticket_type.description }}
   {% endfor %}
 </dl>
 
