@@ -12,6 +12,7 @@ class TicketPurchaseViewTest(TestCase):
         """
         self.assertContains(self.client.get("/"), "name")
 
+
 class TestConfirmationView(TestCase):
 
     def setUp(self):

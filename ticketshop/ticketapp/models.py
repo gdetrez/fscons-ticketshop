@@ -2,6 +2,7 @@
 from uuid import uuid4
 
 from django.db import models
+from django.db.models import Count, Q, F
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail, mail_admins
 from django.dispatch import Signal
@@ -11,11 +12,28 @@ from paypal.standard.ipn.signals import payment_was_successful, payment_was_flag
 from .mails import send_confirmation_email
 
 
+class TicketTypeManager(models.Manager):
+    """
+    Create a custom manager with an extra method
+    that only returns available ticket types
+    """
+    def available(self):
+        """
+        Custom method that return a queryset with only
+        available tickets
+        """
+        return super(TicketTypeManager, self).get_query_set() \
+            .annotate( num_sold = Count('ticket') ) \
+            .filter( Q( limit = None ) | Q( num_sold__lt = F('limit')) )
+
 class TicketType(models.Model):
     name  = models.CharField(max_length=200)
     description  = models.CharField(max_length=200)
     price = models.IntegerField()
     limit = models.IntegerField( null = True, blank = True )
+
+    # Add our custom manager
+    objects = TicketTypeManager()
 
     def __unicode__(self):
       return u"%s" % (self.name)

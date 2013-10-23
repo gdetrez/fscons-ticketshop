@@ -10,6 +10,9 @@ from django.test import TestCase
 from ..models import TicketType, Ticket, TicketPurchase, Coupon
 
 class TicketTypeTest(TestCase):
+    """
+    Tests the TicketType model
+    """
 
     def test_canCreateTicketType(self):
         """
@@ -51,6 +54,41 @@ class TicketTypeTest(TestCase):
         Ticket( name = "Professor Tournesol", ticket_type = tt).save()
         Ticket( name = "Captain Haddock", ticket_type = tt).save()
         self.assertFalse(tt.available())
+
+    def testCustomQueryset(self):
+        """
+        Test that the custom queryset works. It adds the available() method
+        that returns only the tickets that are still available.
+        
+        To test it, we create 3 kind of tickets: one that is always available,
+        one which has only 2 available and one that is unavailable.
+        Calling TicketType.objects.available() at this point should return the
+        first two.
+        We then create tickets of the first two types and check again. Now
+        TicketType.objects.available() should only return the first type.
+        """
+        available = TicketType.objects.create(
+                name="Available ticket", price=1 )
+        limited = TicketType.objects.create(
+                name="Limited ticket", price=1, limit=2 )
+        unavailable = TicketType.objects.create(
+                name="Unavailable ticket", price=1, limit = 0 )
+        self.assertEqual( [ available, limited ],
+                [ t for t in TicketType.objects.available().order_by( 'name' ) ]
+            )
+        Ticket.objects.create( name = "...", ticket_type = available )
+        Ticket.objects.create( name = "...", ticket_type = limited )
+        Ticket.objects.create( name = "...", ticket_type = unavailable )
+        self.assertEqual( [ available, limited ],
+                [ t for t in TicketType.objects.available().order_by( 'name' ) ]
+            )
+        Ticket.objects.create( name = "...", ticket_type = available )
+        Ticket.objects.create( name = "...", ticket_type = limited )
+        Ticket.objects.create( name = "...", ticket_type = unavailable )
+        self.assertEqual( [ available ],
+                [ t for t in TicketType.objects.available().order_by( 'name' ) ]
+            )
+
 
 
 class TicketTest(TestCase):

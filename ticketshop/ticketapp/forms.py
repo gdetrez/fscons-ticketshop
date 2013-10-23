@@ -1,5 +1,5 @@
 import django.forms as forms
-from .models import TicketPurchase, Ticket
+from .models import TicketPurchase, Ticket, TicketType
 
 class TicketPurchaseForm(forms.ModelForm):
     class Meta:
@@ -14,10 +14,19 @@ class TicketPurchaseForm(forms.ModelForm):
 
 
 class TicketForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        """
+        We extends the __init__ method to be able to restrict
+        ticket types to available types by overwriting the queryset
+        """
+        super(TicketForm, self).__init__(*args, **kwargs)
+        self.fields['ticket_type'].queryset = TicketType.objects.available()
+
     class Meta:
         model  = Ticket
         exclude = ('purchase',)
         widgets = {
-                'ticket_type': forms.Select(attrs={'class':'form-control'}),
-                'name': forms.TextInput( attrs = {
-                        'class':'form-control', 'placeholder': 'Name on badge'})}
+            'ticket_type': forms.Select( attrs={'class':'form-control'} ),
+            'name': forms.TextInput( attrs = {
+                    'class':'form-control', 'placeholder': 'Name on badge'})}
