@@ -1,10 +1,8 @@
 from django.test import Client
 from django.contrib.auth.models import User
-from django.contrib.messages.storage.base import Message
-from django.contrib.messages.constants import ERROR
 
 from django.test import TestCase
-from ..models import TicketType, Ticket, TicketPurchase, Coupon
+from ..models import TicketType, TicketPurchase
 
 class TicketPurchaseViewTest(TestCase):
 
