@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Template for Bootstrap</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Report</h1>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-2">
+          <h2>Total</h2>
+          <p class="text-center" style="font-size: 5em">{{ ticket_total }}</p>
+          <p class="text-center lead" >Tickets</p>
+        </div>
+        <div class="col-md-5">
+          <h2> By type </h2>
+          <div class="col-md-6">
+            <canvas id="byType" width="200" height="200"></canvas>
+          <script>
+            //Get the context of the canvas element we want to select
+            var ctx = document.getElementById("byType").getContext("2d");
+            var data = [
+              {% for type, num in bytype %}
+                { value: {{ num }},
+                  color:"{% cycle "#F7464A" "#E2EAE9" "#D4CCC5" "#949FB1" "#4D5360" %}"
+                },
+              {% endfor %}
+            ];
+            new Chart(ctx).Doughnut(data);
+          </script>
+        </div>
+        <div class="col-md-6">
+          <table cellspacing="0" class="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>#</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for type, num in bytype %}
+              <tr>
+                <td>
+                  <span style="height:1em;width:2em;display:inline-block;background:{% cycle "#F7464A" "#E2EAE9" "#D4CCC5" "#949FB1" "#4D5360" %}"></span>
+                  {{ type }}
+                </td>
+                <td>{{ num }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        </div>
+      </div>
+
+      <h2>By day</h2>
+      <canvas id="byDay" width="1100" height="300"></canvas>
+      <script>
+        //Get the context of the canvas element we want to select
+        var ctx = document.getElementById("byDay").getContext("2d");
+        var data = {
+          labels : [ {% for day,_ in by_day %}"{{ day }}",{% endfor %} ],
+          datasets : [
+            { fillColor : "rgba(220,220,220,0.5)",
+              strokeColor : "rgba(220,220,220,1)",
+              data : [ {% for _,count in by_day %}{{ count }},{% endfor %} ],
+            }
+          ]
+        };
+        new Chart(ctx).Bar(data);
+      </script>
+
+
+    </div>
+  </body>
+</html>

@@ -1,17 +1,23 @@
-from django.views.generic.edit import FormView
-from django.template import RequestContext
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.forms.models import model_to_dict
-from django.contrib.sites.models import Site
 from functools import wraps
+from datetime import timedelta
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
+from django.db.models import Max, Min
+from django.forms.models import model_to_dict
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.views.generic.edit import FormView
+
 from paypal.standard.forms import PayPalPaymentsForm
 
 from .forms import TicketPurchaseForm, TicketForm
-from .models import TicketPurchase, TicketType
+from .models import TicketPurchase, TicketType, Ticket
+from .utils import daterange
 
 
 def purchase_tickets(request):
@@ -98,3 +104,28 @@ def success(self):
 def cancel(request):
     pass
 
+@permission_required('ticketapp.view_report')
+def report(request):
+    data = {}
+    # Total number of tickets
+    tickets = Ticket.objects.filter(purchase__paid = True)
+    data['ticket_total'] = tickets.count()
+    # Tickets by type
+    data['bytype'] = []
+    for type_ in TicketType.objects.all():
+        data['bytype'].append(
+                ( unicode(type_),
+                  tickets.filter( ticket_type = type_ ).count()
+                ) )
+    # By day
+    data['by_day'] = []
+    minmax = TicketPurchase.objects.aggregate(Max('creation_date'), Min('creation_date'))
+    min_day = minmax['creation_date__min']
+    max_day = minmax['creation_date__max']
+    for day in daterange(min_day, max_day):
+        # we want tickets created in this one day range
+        drange = (day, day + timedelta( days = 1 ) )
+        # counting the tickets
+        count = tickets.filter( purchase__creation_date__range = drange ).count()
+        data['by_day'].append( (day, count ) )
+    return render_to_response("report.html", data)
