@@ -19,18 +19,20 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Report</h1>
+        <h1>Tickets sold</h1>
       </div>
-      
-      <h2>Tickets sold</h2>
+
       <div class="row">
-        <div class="col-md-2">
-          <p class="text-center" style="font-size: 5em">{{ ticket_total }}</p>
-          <p class="text-center lead" >Tickets</p>
+        <div class="col-md-4 text-center">
+          <p style="font-size: 5em">{{ ticket_total }}</p>
+          <p class="lead" >Tickets</p>
+          <p style="font-size: 5em">{{ money.total }}</p>
+          <p class="lead">SEK</p>
         </div>
-        <div class="col-md-5">
-          <div class="col-md-6">
+        <div class="col-md-4">
+          <div class="text-center">
             <canvas id="byType" width="200" height="200"></canvas>
+          </div>
           <script>
             //Get the context of the canvas element we want to select
             var ctx = document.getElementById("byType").getContext("2d");
@@ -43,15 +45,7 @@
             ];
             new Chart(ctx).Doughnut(data);
           </script>
-        </div>
-        <div class="col-md-6">
           <table cellspacing="0" class="table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>#</th>
-              </tr>
-            </thead>
             <tbody>
             {% for type, num in bytype %}
               <tr>
@@ -65,26 +59,59 @@
             </tbody>
           </table>
         </div>
+        
+        <div class="col-md-4">
+          <div class="text-center">
+            <canvas id="money" width="200" height="200"></canvas>
+          </div>
+          <script type="text/javascript">
+          var ctx = document.getElementById("money").getContext("2d");
+          var data = [
+            { value: {{ money.donations }}, color: "#D4CCC5" },
+            { value: {{ money.tickets }}, color: "#E2EAE9" },
+          ];
+          new Chart(ctx).Doughnut(data);
+          </script>
+          <table cellspacing="0" class="table">
+            <tbody>
+              <tr>
+                <th>
+                  <span style="height:1em;width:2em;display:inline-block;background:#E2EAE9"></span>
+                  Tickets
+                </th>
+                <td>{{ money.tickets }} SEK</td>
+              </tr>
+              <tr>
+                <th>
+                  <span style="height:1em;width:2em;display:inline-block;background:#D4CCC5"></span>
+                  Donations
+                </th>
+                <td>{{ money.donations }} SEK</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <canvas id="byDay" width="1100" height="300"></canvas>
-      <script>
-        //Get the context of the canvas element we want to select
-        var ctx = document.getElementById("byDay").getContext("2d");
-        var data = {
-          labels : [ {% for day,_ in by_day %}"{{ day }}",{% endfor %} ],
-          datasets : [
-            { fillColor : "rgba(220,220,220,0.5)",
-              strokeColor : "rgba(220,220,220,1)",
-              data : [ {% for _,count in by_day %}{{ count }},{% endfor %} ],
-            }
-          ]
-        };
-        new Chart(ctx).Bar(data);
-      </script>
-
-
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <canvas id="byDay" width="1100" height="300"></canvas>
+          <script>
+            //Get the context of the canvas element we want to select
+            var ctx = document.getElementById("byDay").getContext("2d");
+            var data = {
+              labels : [ {% for day,_ in by_day %}"{{ day }}",{% endfor %} ],
+              datasets : [
+                { fillColor : "rgba(220,220,220,0.5)",
+                  strokeColor : "rgba(220,220,220,1)",
+                  data : [ {% for _,count in by_day %}{{ count }},{% endfor %} ],
+                }
+              ]
+            };
+            new Chart(ctx).Bar(data);
+          </script>
+        </div>
+      </div>
     </div>
   </body>
 </html>

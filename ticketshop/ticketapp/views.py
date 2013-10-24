@@ -122,10 +122,19 @@ def report(request):
     minmax = TicketPurchase.objects.aggregate(Max('creation_date'), Min('creation_date'))
     min_day = minmax['creation_date__min']
     max_day = minmax['creation_date__max']
-    for day in daterange(min_day, max_day):
-        # we want tickets created in this one day range
-        drange = (day, day + timedelta( days = 1 ) )
-        # counting the tickets
-        count = tickets.filter( purchase__creation_date__range = drange ).count()
-        data['by_day'].append( (day, count ) )
+    if min_day is not None:
+      for day in daterange(min_day, max_day):
+          # we want tickets created in this one day range
+          drange = (day, day + timedelta( days = 1 ) )
+          # counting the tickets
+          count = tickets.filter( purchase__creation_date__range = drange ).count()
+          data['by_day'].append( (day, count ) )
+    ## Money
+    data['money'] = {}
+    data['money']['total'] = 0
+    data['money']['donations'] = 0
+    for p in TicketPurchase.objects.filter( paid = True ):
+        data['money']['total'] += p.price()
+        data['money']['donations'] += p.additional_contribution
+    data['money']['tickets'] = data['money']['total'] - data['money']['donations']
     return render_to_response("report.html", data)
