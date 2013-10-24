@@ -57,6 +57,8 @@ class Ticket(models.Model):
     ticket_type = models.ForeignKey(TicketType, default=default_ticket_type)
     name = models.CharField(max_length=200)
     purchase = models.ForeignKey("TicketPurchase", null = True, blank = True)
+    class Meta:
+      permissions = ( ("view_reportk", "Can see the ticket report"), )
 
 class Coupon(models.Model):
     code = models.CharField( max_length = 10, primary_key=True )
