@@ -46,7 +46,7 @@ EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
 EMAIL_USE_TLS = False
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = 'web@fscons.org'
 ########## END EMAIL CONFIGURATION
 
 ########## DATABASE CONFIGURATION
