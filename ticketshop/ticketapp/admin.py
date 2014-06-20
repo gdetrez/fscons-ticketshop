@@ -42,7 +42,7 @@ class TicketPurchaseAdmin(admin.ModelAdmin):
     date_hierarchy = 'creation_date'
     inlines = [TicketInline]
     list_filter = ['paid','coupon', 'ticket__ticket_type']
-    search_fields = ['name', 'email', 'additional_information', 'invoice_id']
+    search_fields = ['name', 'email', 'additional_information', 'invoice_id', 'ticket__name']
     actions = [mark_selected_paid, resend_confirmation]
 
 
