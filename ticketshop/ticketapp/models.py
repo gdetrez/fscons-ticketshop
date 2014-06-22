@@ -24,13 +24,23 @@ class TicketTypeManager(models.Manager):
         """
         return super(TicketTypeManager, self).get_query_set() \
             .annotate( num_sold = Count('ticket') ) \
-            .filter( Q( limit = None ) | Q( num_sold__lt = F('limit')) )
+            .filter(Q(quantity=None) | Q(num_sold__lt=F('quantity')))
 
 class TicketType(models.Model):
-    name  = models.CharField(max_length=200)
-    description  = models.CharField(max_length=200)
-    price = models.IntegerField()
-    limit = models.IntegerField( null = True, blank = True )
+    """
+    A type of ticket is for instance "regular", "early bird", etc.
+
+    """
+    name  = models.CharField(max_length=200,
+            help_text="How do you call this kind of ticket? E.g. \"Early bird\" or \"Student\"")
+    description  = models.TextField(blank=True,
+            help_text="What does this ticket gives access to and who can by it.")
+    price = models.IntegerField(
+            help_text="Price in SEK.")
+    sales_end = models.DateField(
+            help_text="After this, it won't be possible to buy this ticket anymore.")
+    quantity = models.IntegerField( null = True, blank = True,
+            help_text="Maximum number of ticket of this type.")
 
     # Add our custom manager
     objects = TicketTypeManager()
@@ -39,10 +49,10 @@ class TicketType(models.Model):
       return u"%s" % (self.name)
 
     def available(self, n=1):
-        if self.limit is None:
+        if self.quantity is None:
             return True
         else:
-            return self.ticket_set.count() + n <= self.limit
+            return self.ticket_set.count() + n <= self.quantity
     class Meta:
         ordering = ['-price']
 
@@ -55,8 +65,22 @@ def default_ticket_type():
 
 class Ticket(models.Model):
     ticket_type = models.ForeignKey(TicketType, default=default_ticket_type)
-    name = models.CharField(max_length=200)
-    purchase = models.ForeignKey("TicketPurchase", null = True, blank = True)
+    name = models.CharField(max_length=200,
+            help_text="This is the name that will be printed on your badge")
+    email = models.EmailField()
+    gender = models.CharField(max_length=1,
+            verbose_name = "I identify my gender as…",
+            help_text    = "Why are we asking this? TOWRITE",
+            choices = (
+                ('F', 'Women'),
+                ('M', 'Men'),
+                ('T', 'Trans*'),
+                ('?', 'I prefer not to say')
+    ))
+    returning_visitor = models.BooleanField(
+            verbose_name="I have been to FSCONS before",
+            help_text="Why are we asking this? .......")
+    purchase = models.ForeignKey("TicketPurchase", related_name="tickets")
     class Meta:
       permissions = ( ("view_reportk", "Can see the ticket report"), )
 
@@ -73,16 +97,21 @@ class Coupon(models.Model):
 
 class TicketPurchase(models.Model):
     ## Contact details
-    name = models.CharField(max_length=200)
-    email = models.EmailField()
-    keep_me_updated = models.BooleanField( default = False )
+    buyer_first_name = models.CharField(
+            verbose_name="First name",
+            max_length=200)
+    buyer_surname = models.CharField(
+            verbose_name="Surname",
+            max_length=200)
+    buyer_email = models.EmailField(
+            verbose_name="E-mail")
     additional_information = models.TextField( blank=True,
         help_text="Do not hesitate to let us know if you have specific requirements or comments about the registration.")
     ## Payment details
     coupon = models.ForeignKey(Coupon, null = True, blank = True,
-        help_text="If you have a discount coupon, enter the code here.")
+            help_text="If you have a promotional code, enter it here:")
     additional_contribution = models.IntegerField( default=0, blank=True,
-        help_text = "We try to make the conference affordable for as many people as possible. Consider chipping in extra, if you can, to help keep it that way.")
+            help_text = "We try to make the conference affordable for as many people as possible. Consider chipping in extra, if you can, to help keep it that way.")
     paid = models.BooleanField(default = False, editable = False)
     ## Administrativia
     creation_date = models.DateTimeField(editable = False, auto_now_add = True)
@@ -90,11 +119,14 @@ class TicketPurchase(models.Model):
                     max_length=36, default=uuid4, editable=False, unique=True)
 
     def __unicode__(self):
-        return u"%s (%d ticket(s))" % ( self.name, self.number_of_tickets() )
+        return u"%s %s (%d ticket(s))" % (
+                self.buyer_first_name,
+                self.buyer_surname,
+                self.number_of_tickets())
 
     def price(self):
         p = 0
-        for ticket in self.ticket_set.all():
+        for ticket in self.tickets.all():
             p += ticket.ticket_type.price
         p+= self.additional_contribution
         if self.coupon is not None:
@@ -102,7 +134,7 @@ class TicketPurchase(models.Model):
         return p
 
     def number_of_tickets(self):
-        return self.ticket_set.count()
+        return self.tickets.count()
 
     def mark_as_paid(self):
         """

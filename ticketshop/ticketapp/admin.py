@@ -38,16 +38,21 @@ def resend_confirmation(modeladmin, request, queryset):
 resend_confirmation.short_description = "Re-send confirmation email"
 
 class TicketPurchaseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'number_of_tickets', 'price', 'invoice_id', 'paid')
+    list_display = ('buyer_first_name', 'buyer_surname', 'buyer_email',
+                    'number_of_tickets', 'price', 'invoice_id', 'paid')
     date_hierarchy = 'creation_date'
     inlines = [TicketInline]
-    list_filter = ['paid','coupon', 'ticket__ticket_type']
+    list_filter = ['paid','coupon', 'tickets__ticket_type']
     search_fields = ['name', 'email', 'additional_information', 'invoice_id', 'ticket__name']
     actions = [mark_selected_paid, resend_confirmation]
 
 
 admin.site.register(TicketPurchase, TicketPurchaseAdmin)
-admin.site.register(TicketType)
+
+class TicketTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'sales_end', 'quantity')
+
+admin.site.register(TicketType, TicketTypeAdmin)
 
 class CouponAdmin(admin.ModelAdmin):
     list_display = ('code', 'percentage', 'active')

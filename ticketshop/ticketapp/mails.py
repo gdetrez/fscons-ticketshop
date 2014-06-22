@@ -14,6 +14,9 @@ def send_confirmation_email(purchase):
     send_mail(
         subject        = 'Registration confirmation',
         from_email     = 'FSCONS <info@fscons.org>',
-        recipient_list = ['%s <%s>' % (purchase.name, purchase.email)],
+        recipient_list = ['%s %s <%s>' % (
+                            purchase.buyer_first_name,
+                            purchase.buyer_surname,
+                            purchase.buyer_email)],
         message        = body.render( d ),
         fail_silently  = False)

@@ -7,6 +7,7 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import Max, Min
 from django.forms.models import model_to_dict
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -15,9 +16,62 @@ from django.views.generic.edit import FormView
 
 from paypal.standard.forms import PayPalPaymentsForm
 
-from .forms import TicketPurchaseForm, TicketForm
-from .models import TicketPurchase, TicketType, Ticket
+from .forms import TicketPurchaseForm, TicketFormSet, TicketsForm
+from .models import TicketPurchase, TicketType, Ticket, Coupon
 from .utils import daterange
+
+def index(request):
+    """
+    Index view: shows a form with a list of ticket that one can buy
+    """
+    ticket_types = TicketType.objects.all()
+    form = TicketsForm(ticket_types,[], request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        p = TicketPurchase()
+        print data
+        if data['coupon']:
+            coupon = Coupon.objects.get(data['coupon'])
+            p.coupon = coupon
+        p.additional_contribution = data['donation'] or 0
+        tickets = []
+        for type_ in ticket_types:
+            key = 'quantity:%d'%type_.id
+            if key in data:
+                for i in range(data[key]):
+                    tickets.append(Ticket(ticket_type=type_))
+        request.session['purchase'] = p
+        request.session['tickets'] = tickets
+        return redirect('/register/')
+
+    return render_to_response(
+            "index.html",
+            dict(form=form),
+            context_instance=RequestContext(request))
+
+def details(request):
+    """
+    Once the user has selected what tickets she wants to buy,
+    this view will let her enter the details.
+    """
+    p = TicketPurchase()
+    form = TicketPurchaseForm(
+            request.POST or None,
+            instance=request.session['purchase']
+    )
+    formset = TicketFormSet(
+            request.POST or None,
+            instances=request.session['tickets']
+    )
+    if form.is_valid() and formset.is_valid():
+        purchase = form.instance
+        purchase.save()
+        for f in formset:
+            purchase.tickets.add(f.instance)
+    return render_to_response(
+            "details.html",
+            dict(form=form, formset=formset),
+            context_instance=RequestContext(request))
 
 
 def purchase_tickets(request):
@@ -70,8 +124,7 @@ def purchase_required(view):
             return redirect('/')
     return wraps(view)(_decorator)
 
-@purchase_required
-def confirmation(request, purchase):
+def confirmation(request):
     """
     This view shows the user what she is about to buy
     """
@@ -79,6 +132,8 @@ def confirmation(request, purchase):
     # This a a bit convoluted because the django app that we use to handle
     # PayPal payments only generates POST forms to send the user to paypal.
     # So we have to convert the form to a query string
+    print request.session['purchase']
+    purchase = TicketPurchase.objects.get(request.session['purchase'].invoice_id)
     site = Site.objects.get_current()
     paypal_dict = {
         "business": "paypal@fscons.org",

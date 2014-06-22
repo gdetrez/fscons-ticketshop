@@ -1,13 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from ticketapp.views import purchase_tickets, confirmation, success, cancel, report
+from ticketapp.views import index, purchase_tickets, confirmation, success, cancel, report, details
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', purchase_tickets),
+    url(r'^$', index),
+    url(r'^register/$', details, name='details'),
     url(r'^confirm/$', confirmation, name='confirm'),
     url(r'^success/$',
             TemplateView.as_view(template_name="paypal_return.html"),

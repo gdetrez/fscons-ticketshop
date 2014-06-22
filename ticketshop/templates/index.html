@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block "content" %}
+
+<p>Join us during our three day program, starting with relevant workshops on
+the Friday and continuing with two full days of talks and social events where
+you meet, greet, and share information in areas related to our three pillars:
+Society, Technology and Culture.
+
+<p>We have different registration options, so take your pick and see you
+in Gothenburg, Sweden in November!
+
+<p>If you encounter any problems while registering, we would appreciate your
+feedback so that we can ensure that the problems are corrected. Please email
+info@fscons.org in this case, or if you wish to register in another way.
+
+<form role="form" action="" method="POST" style="background:#F8F8F8;padding: 1em">
+  {% csrf_token %}
+  <fieldset><legend>Ticket information</legend>
+    <table class="table">
+      <col width="40%">
+      <col width="20%">
+      <col width="20%">
+      <col width="20%">
+      <thead>
+        <tr>
+          <th>Ticket type</th>
+          <th>Sales end</th>
+          <th>Price</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for type_ in form.ticket_types %}<tr>
+          <td>{{ type_.name }}
+            <spann class="help-block">{{type_.description}}</span>
+          <td>{{ type_.sales_end }}
+          <td>{{ type_.price }} SEK
+          <td>
+            {% if type_.available %}
+              <select name="quantity:{{ type_.id }}">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+              </select>
+            {% else %}
+              <strong>Sold out</strong>
+            {% endif %}
+        <tr>{% endfor %}
+        <tr>
+          <td>
+            {{form.donation.label}}
+            <span class="help-block">{{ form.donation.help_text}}</span>
+          </td>
+          <td></td>
+          <td></td>
+          <td>{{form.donation}}
+            {% for err in form.donation.errors %}
+              <p class="text-danger">{{err}}</p>
+            {% endfor %}
+
+        </tr>
+        <tr>
+          <td colspan=3 class="text-right">
+            {{form.coupon.label}}
+          <td>
+            {{form.coupon}}
+            {% for err in form.coupon.errors %}
+              <p class="text-danger">{{err}}</p>
+            {% endfor %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="control-group row">
+    <button type="submit" class="btn btn-primary col-lg-6 col-md-offset-3" id="checkout">
+        Checkout
+    </button>
+  </div>
+</form>
+{% endblock %}

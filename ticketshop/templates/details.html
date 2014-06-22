@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block "content" %}
+<form role="form" action="" method="POST" style="background:#F8F8F8;padding: 1em" class="form-horizontal">
+  {% csrf_token %}
+  <fieldset><legend>Buyer information</legend>
+    {% include "bootstrap-form-group.html" with field=form.buyer_first_name %}
+    {% include "bootstrap-form-group.html" with field=form.buyer_surname %}
+    {% include "bootstrap-form-group.html" with field=form.buyer_email %}
+  </fieldset>
+  {{ formset.management_form }}
+  {% for ticketform in formset %}
+    <fieldset><legend>Ticket {{forloop.counter}}</legend>
+      {% include "bootstrap-form-group.html" with field=ticketform.name %}
+      <div class="form-group">
+        <div class="col-sm-offset-5 col-sm-5">
+          <div class="checkbox">
+            <label>
+              {{ ticketform.returning_visitor }}
+              {{ ticketform.returning_visitor.label }}
+            </label>
+          </div>
+          <span class="help-block">{{ ticketform.returning_visitor.help_text }}</span>
+        </div>
+      </div>
+      {% include "bootstrap-form-group.html" with field=ticketform.email %}
+      {% include "bootstrap-form-group.html" with field=ticketform.gender %}
+    </fieldset>
+  {% endfor %}
+  <div class="control-group row">
+    <button type="submit" class="btn btn-primary col-lg-6 col-md-offset-3" id="checkout">
+        Checkout
+    </button>
+  </div>
+</form>
+{% endblock %}
