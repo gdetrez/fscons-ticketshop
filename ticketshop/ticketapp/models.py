@@ -68,18 +68,21 @@ class Ticket(models.Model):
     name = models.CharField(max_length=200,
             help_text="This is the name that will be printed on your badge")
     email = models.EmailField()
+    # Gender distribution, as required by the manifesto.
+    # For a discussion on more inclusive gender question, see
+    # http://itspronouncedmetrosexual.com/2012/06/how-can-i-make-the-gender-question-on-an-application-form-more-inclusive/
     gender = models.CharField(max_length=1,
-            verbose_name = "I identify my gender as…",
-            help_text    = "Why are we asking this? TOWRITE",
+            verbose_name="I identify my gender as…",
+            help_text="Why are we asking this? We ask you for your gender in order to evaluate our effort in reaching a fair and reasonable, within 60/40, gender distribution among participants.",
             choices = (
                 ('F', 'Women'),
                 ('M', 'Men'),
                 ('T', 'Trans*'),
-                ('?', 'I prefer not to say')
+                ('?', 'Prefer not to disclose')
     ))
     returning_visitor = models.BooleanField(
             verbose_name="I have been to FSCONS before",
-            help_text="Why are we asking this? .......")
+    )
     purchase = models.ForeignKey("TicketPurchase", related_name="tickets")
     class Meta:
       permissions = ( ("view_reportk", "Can see the ticket report"), )
