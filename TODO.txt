@@ -1,0 +1,9 @@
+* finish confirmation
+* enforce sales end
+* enforce sold out
+* cleaning?
+* e2e test
+* test mail
+* 2 mails: summary and payment confirmation
+* add discourse integratior
+* add "keep me informed" to the tickets
